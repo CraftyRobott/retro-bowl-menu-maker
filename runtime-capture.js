@@ -65,9 +65,9 @@ window.__rbmmFail=function(){parent.postMessage({__rbmmCapture:{events:[{time:no
 </body></html>`;
   }
   function launch() {
-    const repo = ($("sourceRepo").value || "ReznorsRevenge1/retro-bowl-college").trim().replace(/^https?:\\/\\/github\\.com\\//,"").replace(/\\.git$/,"");
+    const repo = ($("sourceRepo").value || "ReznorsRevenge1/retro-bowl-college").trim().replace(/^https?:\/\/github\.com\//,"").replace(/\.git$/,"");
     const branch = ($("sourceBranch").value || "main").trim() || "main";
-    if (!/^[\\w.-]+\\/[\\w.-]+$/.test(repo)) { alert("Enter a valid owner/repository."); return; }
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { alert("Enter a valid owner/repository."); return; }
     capture.repo=repo;capture.branch=branch;capture.startedAt=new Date().toISOString();
     capture.events=[];capture.texts=[];capture.sprites=[];capture.objects=[];capture.clicks=[];capture.room="";
     $("runtimeModal").style.display="block";
