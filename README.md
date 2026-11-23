@@ -29,7 +29,7 @@ These are source-discovery groups, not yet a fully verified runtime navigation g
 3. Navigate through the game. The capture panel records room changes, button callback function names, room helper calls, text draw calls and coordinates, sprite draw calls, dynamically created instances, and pointer coordinates.
 4. Use **Export capture JSON** to save the collected evidence for analysis.
 
-The capture is observational: it does not modify the source repository or save game progress intentionally. GameMaker's internal drawing pipeline is not fully converted into editable objects yet, so the runtime capture is evidence for the next extraction step rather than a pixel-perfect editable menu automatically. If the game build depends on assets or browser APIs unavailable from the raw GitHub source host, the runtime frame may fail to boot; check its captured error event and use a locally hosted copy of the game as the next fallback.
+The capture is observational: it does not modify the source repository or save game progress intentionally. The runner supplies the same no-op Poki SDK interface used by the project's no-Poki launcher, waits for the page load event, and then calls `GameMaker_Init()`. GameMaker's internal drawing pipeline is not fully converted into editable objects yet, so the runtime capture is evidence for the next extraction step rather than a pixel-perfect editable menu automatically. If the runner still fails, inspect the runtime event panel for script, asset, or boot errors.
 
 ## Visual editor
 
