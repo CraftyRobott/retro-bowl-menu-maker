@@ -23,11 +23,11 @@
     render();
   }
   function buildDocument(repo, branch) {
-    const base = "https://raw.githubusercontent.com/" + repo + "/" + encodeURIComponent(branch) + "/html5game/";
+    const base = "https://raw.githubusercontent.com/" + repo + "/" + encodeURIComponent(branch) + "/";
     return `<!doctype html><html><head><meta charset="utf-8"><base href="${base}">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}#gm4html5_div_id{width:100%;height:100%;display:flex;align-items:center;justify-content:center}canvas{width:min(100vw,177.7vh);height:auto;max-height:100vh;image-rendering:pixelated;touch-action:none}</style>
-</head><body><div id="gm4html5_div_id"><img src="splash.png" id="GM4HTML5_loadingscreen" style="display:none"><canvas id="canvas" width="853" height="480"><p>Canvas unsupported.</p></canvas></div>
+</head><body><div id="gm4html5_div_id"><img src="html5game/splash.png" id="GM4HTML5_loadingscreen" style="display:none"><canvas id="canvas" width="853" height="480"><p>Canvas unsupported.</p></canvas></div>
 <script>
 (function(){
 "use strict";
@@ -56,17 +56,9 @@ var canvas=document.getElementById("canvas");if(canvas)canvas.addEventListener("
 roomName=currentRoom();add("runtime ready","Instrumentation installed; waiting for page load");send();
 setInterval(function(){roomName=currentRoom();send();},1000);
 window.addEventListener("load",function(){
-  window.PokiSDK={
-    init:function(){return Promise.resolve();},
-    gameplayStart:function(){},gameplayStop:function(){},happyTime:function(){},
-    commercialBreak:function(){return Promise.resolve();},
-    rewardedBreak:function(){return Promise.resolve();},
-    gameLoadingStart:function(){},gameLoadingProgress:function(){},gameLoadingFinished:function(){},
-    getURLParam:function(){return null;},setDebug:function(){}
-  };
-  window.PokiSDK_OK=true;window.PokiSDK_loadState=2;
+  add("page load","All game scripts and the document load event completed");
   if(typeof GameMaker_Init==="function"){
-    try{GameMaker_Init();add("boot","GameMaker_Init called after full page load with no-op Poki SDK");}
+    try{GameMaker_Init();add("boot","GameMaker_Init called using the original no-Poki startup sequence");}
     catch(e){add("boot exception",e&&e.stack?e.stack:String(e));}
   }else{add("boot error","GameMaker_Init was not found after RetroBowl.js loaded");}
   send();
@@ -76,7 +68,18 @@ window.__rbmmBoot=install;
 window.__rbmmFail=function(){parent.postMessage({__rbmmCapture:{events:[{time:now(),type:"load error",label:"Could not load RetroBowl.js"}],room:"load failed"}},"*");};
 })();
 </script>
-<script src="RetroBowl.js" onload="window.__rbmmBoot()" onerror="window.__rbmmFail()"></script>
+<script>
+window.PokiSDK={
+ init:function(){return Promise.resolve();},
+ gameplayStart:function(){},gameplayStop:function(){},happyTime:function(){},
+ commercialBreak:function(){return Promise.resolve();},
+ rewardedBreak:function(){return Promise.resolve();},
+ gameLoadingStart:function(){},gameLoadingProgress:function(){},gameLoadingFinished:function(){},
+ getURLParam:function(){return null;},setDebug:function(){}
+};
+window.PokiSDK_OK=true;window.PokiSDK_loadState=2;
+</script>
+<script src="html5game/RetroBowl.js" onload="window.__rbmmBoot()" onerror="window.__rbmmFail()"></script>
 </body></html>`;
   }
   function launch() {
