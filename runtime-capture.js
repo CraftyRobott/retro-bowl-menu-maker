@@ -23,7 +23,7 @@
     render();
   }
   function buildDocument(repo, branch) {
-    const base = "https://raw.githubusercontent.com/" + repo + "/" + encodeURIComponent(branch) + "/";
+    const base = "https://cdn.jsdelivr.net/gh/" + repo + "@" + encodeURIComponent(branch) + "/";
     return `<!doctype html><html><head><meta charset="utf-8"><base href="${base}">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}#gm4html5_div_id{width:100%;height:100%;display:flex;align-items:center;justify-content:center}canvas{width:min(100vw,177.7vh);height:auto;max-height:100vh;image-rendering:pixelated;touch-action:none}</style>
@@ -65,7 +65,7 @@ window.addEventListener("load",function(){
 },{once:true});
 }
 window.__rbmmBoot=install;
-window.__rbmmFail=function(){parent.postMessage({__rbmmCapture:{events:[{time:now(),type:"load error",label:"Could not load RetroBowl.js"}],room:"load failed"}},"*");};
+window.__rbmmFail=function(url){parent.postMessage({__rbmmCapture:{events:[{time:now(),type:"load error",label:"Could not load RetroBowl.js from either CDN",extra:{attempted:url||"unknown",fallback:"https://raw.githubusercontent.com/${repo}/${encodeURIComponent(branch)}/html5game/RetroBowl.js"}}],room:"load failed"}}, "*");};
 })();
 </script>
 <script>
@@ -79,7 +79,7 @@ window.PokiSDK={
 };
 window.PokiSDK_OK=true;window.PokiSDK_loadState=2;
 </script>
-<script src="html5game/RetroBowl.js" onload="window.__rbmmBoot()" onerror="window.__rbmmFail()"></script>
+<script>\n(function(){var primary="https://cdn.jsdelivr.net/gh/${repo}@${encodeURIComponent(branch)}/html5game/RetroBowl.js";var fallback="https://raw.githubusercontent.com/${repo}/${encodeURIComponent(branch)}/html5game/RetroBowl.js";var s=document.createElement("script");s.src=primary;s.onload=function(){window.__rbmmBoot();};s.onerror=function(){var first=s.src;s.remove();var f=document.createElement("script");f.src=fallback;f.onload=function(){window.__rbmmBoot();};f.onerror=function(){window.__rbmmFail(first+" and "+f.src);};document.body.appendChild(f);};document.body.appendChild(s);})();\n</script>
 </body></html>`;
   }
   function launch() {
