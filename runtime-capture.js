@@ -79,7 +79,9 @@ window.PokiSDK={
 };
 window.PokiSDK_OK=true;window.PokiSDK_loadState=2;
 </script>
-<script>\n(function(){var primary="https://cdn.jsdelivr.net/gh/${repo}@${encodeURIComponent(branch)}/html5game/RetroBowl.js";var fallback="https://raw.githubusercontent.com/${repo}/${encodeURIComponent(branch)}/html5game/RetroBowl.js";var s=document.createElement("script");s.src=primary;s.onload=function(){window.__rbmmBoot();};s.onerror=function(){var first=s.src;s.remove();var f=document.createElement("script");f.src=fallback;f.onload=function(){window.__rbmmBoot();};f.onerror=function(){window.__rbmmFail(first+" and "+f.src);};document.body.appendChild(f);};document.body.appendChild(s);})();\n</script>
+<script>
+(function(){var primary="https://cdn.jsdelivr.net/gh/${repo}@${encodeURIComponent(branch)}/html5game/RetroBowl.js";var fallback="https://raw.githubusercontent.com/${repo}/${encodeURIComponent(branch)}/html5game/RetroBowl.js";var s=document.createElement("script");s.src=primary;s.onload=function(){window.__rbmmBoot();};s.onerror=function(){var first=s.src;s.remove();var f=document.createElement("script");f.src=fallback;f.onload=function(){window.__rbmmBoot();};f.onerror=function(){window.__rbmmFail(first+" and "+f.src);};document.body.appendChild(f);};document.body.appendChild(s);})();
+</script>
 </body></html>`;
   }
   function launch() {
