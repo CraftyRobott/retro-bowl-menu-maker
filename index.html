@@ -21,11 +21,20 @@
 .hierarchy-details{background:#121820;border:1px solid #303a48;border-radius:6px;padding:10px;margin-top:8px}
 .hierarchy-details h3{font-size:13px;margin:5px 0}.hierarchy-details p{font-size:11px;color:#aab6c5;white-space:pre-wrap;overflow-wrap:anywhere}
 .detail-kind{font-size:9px;letter-spacing:1px;color:#83c5a7;font-weight:800}.detail-meta{font-size:10px;color:#8998aa;overflow-wrap:anywhere}.detail-meta code{color:#cbd7e4}
+#runtimeModal{display:none;position:fixed;inset:0;z-index:30;background:#090d12f5;padding:18px;overflow:auto}
+.runtime-shell{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:minmax(500px,1fr) 330px;gap:14px;align-items:start}
+.runtime-main,.runtime-side{background:#191e26;border:1px solid #344151;border-radius:8px;padding:12px}
+.runtime-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.runtime-head strong{font-size:15px}.runtime-head .spacer{flex:1}
+#runtimeFrame{width:100%;aspect-ratio:853/480;border:1px solid #536174;background:#000;display:block}
+.runtime-side{max-height:calc(100vh - 40px);overflow:auto}.runtime-side h3{font-size:13px;margin:12px 0 6px}
+#runtimeStatus{font-size:11px;color:#aab6c5;min-height:30px}
+#runtimeEvents,#runtimeText,#runtimeObjects{font:11px/1.45 ui-monospace,monospace;color:#d0dbe7;white-space:pre-wrap;overflow-wrap:anywhere;background:#10151c;border:1px solid #303a48;border-radius:5px;padding:8px;max-height:170px;overflow:auto}
+@media(max-width:950px){.runtime-shell{grid-template-columns:1fr}.runtime-side{max-height:none}}
 
 </style>
 </head>
 <body><div class="app">
-<header class="top"><div class="brand">RETRO BOWL <span>MENU MAKER</span></div><span class="status">Visual menu editor · v1.0</span><div class="spacer"></div><button id="undoBtn" title="Undo">↶ Undo</button><button id="redoBtn" title="Redo">↷ Redo</button><button id="saveBtn">Save project</button><button id="loadBtn">Load</button><button class="primary" id="exportBtn">Export mod</button></header>
+<header class="top"><div class="brand">RETRO BOWL <span>MENU MAKER</span></div><span class="status">Visual menu editor · v1.0</span><div class="spacer"></div><button id="undoBtn" title="Undo">↶ Undo</button><button id="redoBtn" title="Redo">↷ Redo</button><button id="saveBtn">Save project</button><button id="loadBtn">Load</button><button class="primary" id="exportBtn">Export mod</button><button id="runtimeBtn">Run &amp; capture</button></header>
 <div class="workspace">
 <aside class="left">
 <div class="section-title">Game source</div>
@@ -51,6 +60,7 @@
 </div><footer class="bottom"><span id="projectStatus">Untitled project</span><span>853 × 480</span><span>Autosave is not enabled — save your project JSON regularly.</span></footer></div>
 <div class="modal-back" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Export mod</h2><button id="closeModal">Close</button></div><div id="modalBody"></div></div></div>
 <input type="file" id="fileInput" accept=".json,application/json" hidden>
+<div id="runtimeModal"><div class="runtime-shell"><section class="runtime-main"><div class="runtime-head"><strong>Instrumented Retro Bowl College</strong><span class="spacer"></span><button id="runtimeReload">Reload game</button><button id="runtimeClose" class="danger">Close</button></div><iframe id="runtimeFrame" title="Instrumented Retro Bowl College"></iframe><p class="hint">Play the game normally. Room changes, button callback functions, text draw calls, sprites, and dynamically created objects are recorded as the game runs.</p></section><aside class="runtime-side"><div class="section-title">Runtime capture</div><div id="runtimeStatus">Waiting for game launch…</div><button id="runtimeExport" style="width:100%">Export capture JSON</button><h3>Navigation / callback events</h3><div id="runtimeEvents">No events captured yet.</div><h3>Visible text draw calls</h3><div id="runtimeText">No text captured yet.</div><h3>Dynamic UI objects</h3><div id="runtimeObjects">No objects captured yet.</div></aside></div></div>
 <script>
 (function(){
 "use strict";
@@ -151,5 +161,5 @@ $("stageInner").onclick=function(){selected=null;render()};document.addEventList
 window.RetroBowlMenuMaker={project:project,refresh:render,getCurrentMenu:menu};
 render();
 })();
-</script><script src="hierarchy.js"></script>
+</script><script src="hierarchy.js"></script><script src="runtime-capture.js"></script>
 </body></html>
