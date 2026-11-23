@@ -45,7 +45,9 @@
       else if(/screen/.test(n))g="Setup Screens";
       (screenGroups[g]||(screenGroups[g]=[])).push(addNode("","screen:"+n,human(n),"screen","GameMaker function: "+n));
     });
+    const builderNodes=[...builderNames].sort().map(n=>addNode("root:builders","builder:"+n,human(n),"screen","Referenced by one or more button callbacks: "+n));
     const roots=[];
+    roots.push(addNode(null,"root:builders","Room / screen builders referenced by buttons","folder",builderNodes.length+" referenced functions",builderNodes));
     roots.push(addNode(null,"root:screens","Screen-related functions","folder",uniqueScreens.length+" source functions",Object.entries(screenGroups).sort().map(([g,items])=>addNode("root:screens","screen-group:"+g,g,"folder",items.length+" functions",items))));
     roots.push(addNode(null,"root:actions","Button callbacks","folder",clickNames.length+" source callbacks",Object.entries(clickGroups).sort().map(([g,items])=>addNode("root:actions","action-group:"+g,g,"folder",items.length+" callbacks",items.sort((a,b)=>a.label.localeCompare(b.label))))));
     const roomFns=[...names].filter(n=>/^gml_Object_.*_(?:Create|Step|Draw)_0$/.test(n));
