@@ -20,7 +20,16 @@ The tree is generated from the actual source file, not a hand-written list of as
 - Button callback functions grouped by their names and apparent feature area.
 - GameMaker objects with menu/UI-related names.
 
-These are source-discovery groups, not yet a fully verified runtime navigation graph. Some GameMaker rooms are created dynamically, and a callback can navigate indirectly through helper functions. The next integration step is runtime instrumentation to capture actual room changes, visible button instances, text, and geometry. The app does not claim to have extracted pixel-perfect menu layouts yet.
+These are source-discovery groups, not yet a fully verified runtime navigation graph. Some GameMaker rooms are created dynamically, and a callback can navigate indirectly through helper functions.
+
+## Run the game and capture its live UI
+
+1. Select **Run & capture** in the top bar.
+2. The app opens an instrumented game frame using the selected repository and branch. It loads `html5game/RetroBowl.js` directly and calls `GameMaker_Init()` without the Poki startup wrapper.
+3. Navigate through the game. The capture panel records room changes, button callback function names, room helper calls, text draw calls and coordinates, sprite draw calls, dynamically created instances, and pointer coordinates.
+4. Use **Export capture JSON** to save the collected evidence for analysis.
+
+The capture is observational: it does not modify the source repository or save game progress intentionally. GameMaker's internal drawing pipeline is not fully converted into editable objects yet, so the runtime capture is evidence for the next extraction step rather than a pixel-perfect editable menu automatically. If the game build depends on assets or browser APIs unavailable from the raw GitHub source host, the runtime frame may fail to boot; check its captured error event and use a locally hosted copy of the game as the next fallback.
 
 ## Visual editor
 
