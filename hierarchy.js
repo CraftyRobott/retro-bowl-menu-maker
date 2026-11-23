@@ -50,9 +50,9 @@
     roots.push(addNode(null,"root:builders","Room / screen builders referenced by buttons","folder",builderNodes.length+" referenced functions",builderNodes));
     roots.push(addNode(null,"root:screens","Screen-related functions","folder",uniqueScreens.length+" source functions",Object.entries(screenGroups).sort().map(([g,items])=>addNode("root:screens","screen-group:"+g,g,"folder",items.length+" functions",items))));
     roots.push(addNode(null,"root:actions","Button callbacks","folder",clickNames.length+" source callbacks",Object.entries(clickGroups).sort().map(([g,items])=>addNode("root:actions","action-group:"+g,g,"folder",items.length+" callbacks",items.sort((a,b)=>a.label.localeCompare(b.label))))));
-    const roomFns=[...names].filter(n=>/^gml_Object_.*_(?:Create|Step|Draw)_0$/.test(n));
+    const roomFns=[...names].filter(n=>/^gml_Object_.*_(?:Create|Step|Draw)_\d+$/.test(n));
     const objectGroups={};
-    roomFns.forEach(n=>{const obj=n.replace(/^gml_Object_/,"").replace(/_(?:Create|Step|Draw)_0$/,"");(objectGroups[obj]||(objectGroups[obj]=[])).push(n)});
+    roomFns.forEach(n=>{const obj=n.replace(/^gml_Object_/,"").replace(/_(?:Create|Step|Draw)_\d+$/,"");(objectGroups[obj]||(objectGroups[obj]=[])).push(n)});
     const objects=Object.entries(objectGroups).filter(([name])=>/button|room|menu|title|controller|panel|text|select/i.test(name)).sort((a,b)=>a[0].localeCompare(b[0])).map(([name,items])=>addNode("root:objects","object:"+name,human(name),"object",items.join("\n")));
     roots.push(addNode(null,"root:objects","Menu-related GameMaker objects","folder",objects.length+" objects",objects));
     return {roots,counts:{functions:names.size,clicks:clickNames.length,screens:uniqueScreens.length,builders:builderNodes.length,objects:objects.length}};
