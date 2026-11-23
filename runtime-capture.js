@@ -53,9 +53,24 @@ function spriteWrap(original){return function(sprite,sub,x,y){var key=roomName+"
 ["draw_sprite","draw_sprite_ext","draw_sprite_stretched","draw_sprite_stretched_ext"].forEach(function(n){wrap(n,spriteWrap);});
 Object.getOwnPropertyNames(window).filter(function(n){return /^gml_(?:Global)?Script_btn_click_/.test(n);}).forEach(function(n){wrap(n,function(original){return function(){add("button callback",n,{room:currentRoom()});var r=original.apply(this,arguments);send();return r;};});});
 var canvas=document.getElementById("canvas");if(canvas)canvas.addEventListener("pointerdown",function(ev){var r=canvas.getBoundingClientRect();var x=Math.round((ev.clientX-r.left)*853/r.width),y=Math.round((ev.clientY-r.top)*480/r.height);data.clicks.push({time:now(),x:x,y:y,room:currentRoom()});if(data.clicks.length>150)data.clicks.shift();add("pointer",x+","+y,{room:currentRoom()});send();},true);
-roomName=currentRoom();add("runtime ready","Instrumentation installed before GameMaker_Init");send();
+roomName=currentRoom();add("runtime ready","Instrumentation installed; waiting for page load");send();
 setInterval(function(){roomName=currentRoom();send();},1000);
-if(typeof GameMaker_Init==="function"){window.PokiSDK=null;window.PokiSDK_OK=false;GameMaker_Init();add("boot","GameMaker_Init called");send();}else{add("boot error","GameMaker_Init was not found");send();}
+window.addEventListener("load",function(){
+  window.PokiSDK={
+    init:function(){return Promise.resolve();},
+    gameplayStart:function(){},gameplayStop:function(){},happyTime:function(){},
+    commercialBreak:function(){return Promise.resolve();},
+    rewardedBreak:function(){return Promise.resolve();},
+    gameLoadingStart:function(){},gameLoadingProgress:function(){},gameLoadingFinished:function(){},
+    getURLParam:function(){return null;},setDebug:function(){}
+  };
+  window.PokiSDK_OK=true;window.PokiSDK_loadState=2;
+  if(typeof GameMaker_Init==="function"){
+    try{GameMaker_Init();add("boot","GameMaker_Init called after full page load with no-op Poki SDK");}
+    catch(e){add("boot exception",e&&e.stack?e.stack:String(e));}
+  }else{add("boot error","GameMaker_Init was not found after RetroBowl.js loaded");}
+  send();
+},{once:true});
 }
 window.__rbmmBoot=install;
 window.__rbmmFail=function(){parent.postMessage({__rbmmCapture:{events:[{time:now(),type:"load error",label:"Could not load RetroBowl.js"}],room:"load failed"}},"*");};
