@@ -26,7 +26,7 @@
     const base = "https://cdn.jsdelivr.net/gh/" + repo + "@" + encodeURIComponent(branch) + "/";
     return `<!doctype html><html><head><meta charset="utf-8"><base href="${base}">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<style>html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}#gm4html5_div_id{width:100%;height:100%;display:flex;align-items:center;justify-content:center}canvas{width:min(100vw,177.7vh);height:auto;max-height:100vh;image-rendering:pixelated;touch-action:none}</style>
+<style>html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}#gm4html5_div_id{margin:0;padding:0;border:0;width:100%;height:100%;position:relative}canvas{position:absolute;top:50%;left:50%;bottom:-50%;right:-50%;transform:translate(-50%,-50%);width:853px;height:480px;image-rendering:pixelated;-webkit-interpolation-mode:nearest-neighbor;touch-action:none;margin:0;padding:0;border:0}</style>
 </head><body><div id="gm4html5_div_id"><img src="html5game/splash.png" id="GM4HTML5_loadingscreen" style="display:none"><canvas id="canvas" width="853" height="480"><p>Canvas unsupported.</p></canvas></div>
 <script>
 (function(){
@@ -55,14 +55,12 @@ Object.getOwnPropertyNames(window).filter(function(n){return /^gml_(?:Global)?Sc
 var canvas=document.getElementById("canvas");if(canvas)canvas.addEventListener("pointerdown",function(ev){var r=canvas.getBoundingClientRect();var x=Math.round((ev.clientX-r.left)*853/r.width),y=Math.round((ev.clientY-r.top)*480/r.height);data.clicks.push({time:now(),x:x,y:y,room:currentRoom()});if(data.clicks.length>150)data.clicks.shift();add("pointer",x+","+y,{room:currentRoom()});send();},true);
 roomName=currentRoom();add("runtime ready","Instrumentation installed; waiting for page load");send();
 setInterval(function(){roomName=currentRoom();send();},1000);
-window.addEventListener("load",function(){
-  add("page load","All game scripts and the document load event completed");
-  if(typeof GameMaker_Init==="function"){
-    try{GameMaker_Init();add("boot","GameMaker_Init called using the original no-Poki startup sequence");}
-    catch(e){add("boot exception",e&&e.stack?e.stack:String(e));}
-  }else{add("boot error","GameMaker_Init was not found after RetroBowl.js loaded");}
-  send();
-},{once:true});
+add("boot start","RetroBowl.js loaded; starting GameMaker immediately");
+if(typeof GameMaker_Init==="function"){
+  try{GameMaker_Init();add("boot","GameMaker_Init called immediately after the game script loaded");}
+  catch(e){add("boot exception",e&&e.stack?e.stack:String(e));}
+}else{add("boot error","GameMaker_Init was not found after RetroBowl.js loaded");}
+send();
 }
 window.__rbmmBoot=install;
 window.__rbmmFail=function(url){parent.postMessage({__rbmmCapture:{events:[{time:now(),type:"load error",label:"Could not load RetroBowl.js from either CDN",extra:{attempted:url||"unknown",fallback:"https://raw.githubusercontent.com/${repo}/${encodeURIComponent(branch)}/html5game/RetroBowl.js"}}],room:"load failed"}}, "*");};
