@@ -28,7 +28,7 @@
     clickNames.forEach(n=>{
       const start=source.indexOf("function "+n+"(");
       if(start<0)return;
-      const next=source.indexOf("\\nfunction ",start+10);
+      const next=source.indexOf("\nfunction ",start+10);
       const body=source.slice(start,next<0?Math.min(source.length,start+18000):next);
       const refs=body.match(/gml_(?:Global)?Script_s_[A-Za-z0-9_$]+/g)||[];
       refs.forEach(ref=>{if(/(?:room|title|screen|league|team|menu|init|create|setup|set_up)/i.test(ref))builderNames.add(ref);});
