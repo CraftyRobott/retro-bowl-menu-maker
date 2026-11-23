@@ -23,7 +23,16 @@
     const clickNames=[...names].filter(n=>/^gml_(?:Global)?Script_btn_click_/.test(n));
     const clickGroups={};
     clickNames.forEach(n=>{const label=n.replace(/^gml_(?:Global)?Script_btn_click_/,"");const g=groupFor(label);(clickGroups[g]||(clickGroups[g]=[])).push(addNode("","action:"+label,human(label),"button","Callback: "+n));});
-    const screenNames=[...names].filter(n=>/^gml_(?:Global)?Script_/.test(n) && /(?:draw_gui|set_up_.*screen|title_(?:create|goto)|debug_room_init|goto_room)/i.test(n));
+    const screenNames=[...names].filter(n=>/^gml_(?:Global)?Script_/.test(n) && /(?:draw_gui|set_up_.*screen|title_(?:create|goto)|debug_room_init|goto_room|init_rm|create_title|destroy_rm)/i.test(n));
+    const builderNames=new Set();
+    clickNames.forEach(n=>{
+      const start=source.indexOf("function "+n+"(");
+      if(start<0)return;
+      const next=source.indexOf("\\nfunction ",start+10);
+      const body=source.slice(start,next<0?Math.min(source.length,start+18000):next);
+      const refs=body.match(/gml_(?:Global)?Script_s_[A-Za-z0-9_$]+/g)||[];
+      refs.forEach(ref=>{if(/(?:room|title|screen|league|team|menu|init|create|setup|set_up)/i.test(ref))builderNames.add(ref);});
+    });
     const uniqueScreens=[...new Set(screenNames)].sort();
     const screenGroups={};
     uniqueScreens.forEach(n=>{
@@ -44,7 +53,7 @@
     roomFns.forEach(n=>{const obj=n.replace(/^gml_Object_/,"").replace(/_(?:Create|Step|Draw)_0$/,"");(objectGroups[obj]||(objectGroups[obj]=[])).push(n)});
     const objects=Object.entries(objectGroups).filter(([name])=>/button|room|menu|title|controller|panel|text|select/i.test(name)).sort((a,b)=>a[0].localeCompare(b[0])).map(([name,items])=>addNode("root:objects","object:"+name,human(name),"object",items.join("\n")));
     roots.push(addNode(null,"root:objects","Menu-related GameMaker objects","folder",objects.length+" objects",objects));
-    return {roots,counts:{functions:names.size,clicks:clickNames.length,screens:uniqueScreens.length,objects:objects.length}};
+    return {roots,counts:{functions:names.size,clicks:clickNames.length,screens:uniqueScreens.length,builders:builderNodes.length,objects:objects.length}};
   }
   function flatten(nodes,out=[]){nodes.forEach(n=>{out.push(n);flatten(n.children||[],out)});return out;}
   function renderTree() {
@@ -75,7 +84,7 @@
       const result=scan(source);state.nodes=result.roots;state.loadedAt=new Date();
       window.__rbmmOpenGroups=new Set(["root:screens","root:actions","root:objects"]);
       renderTree();
-      $("hierarchySummary").textContent=result.counts.functions.toLocaleString()+" functions · "+result.counts.screens+" screen-related functions · "+result.counts.clicks+" button callbacks · "+result.counts.objects+" UI objects";
+      $("hierarchySummary").textContent=result.counts.functions.toLocaleString()+" functions · "+result.counts.screens+" screen-related functions · "+result.counts.builders+" room builders · "+result.counts.clicks+" button callbacks · "+result.counts.objects+" UI objects";
       setStatus("Source scanned successfully · "+(source.length/1048576).toFixed(1)+" MB");
       renderDetail(addNode(null,"loaded","Source analysis complete","info","Repository: "+repo+"\nBranch: "+branch+"\nEntry: html5game/RetroBowl.js\nFunctions: "+result.counts.functions+"\nButton callbacks: "+result.counts.clicks));
     }catch(err){setStatus(err.message,true);$("hierarchySummary").textContent="Source scan failed";console.error("[Menu Maker]",err);}
